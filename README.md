@@ -1,1 +1,1 @@
-##A Calendar made with Vanilla JS
+## A Calendar made with Vanilla JS
