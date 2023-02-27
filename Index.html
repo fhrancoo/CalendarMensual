@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<style>
+
+  html {
+    user-select: none;
+  }
+
+  .calendar {
+    width: 300px;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    margin: auto;
+    margin-top: 2rem;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .header h2 {
+    margin: 0;
+  }
+
+  .months {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* grid-gap: 1rem; */
+  }
+
+  .months div {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding: 2px;
+    transition: all ease-in .1s;
+    cursor: pointer;
+    border: transparent solid 1px;
+    border-radius: 5px;
+  }
+  .months div:hover {
+    border: black solid 1px;
+    background-color: rgba(206, 206, 206, 0.288);
+  }
+
+  .selected {
+    border: black solid 1px !important;
+    background-color: rgba(206, 206, 206, 0.288);
+  }
+
+  .calendar button {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .calendar button:hover {
+    background-color: #eee;
+  }
+</style>
+
+<body>
+  <input id="date" type="text" disabled >
+  <button onclick="openCalendar()">OPEN CALENDAR</button>
+</body>
+
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+  const calendar = 
+  `
+  <div class="calendar">
+    <div class="header">
+      <button id="prev-year">&lt;</button>
+      <h2 id="year"></h2>
+      <button id="next-year">&gt;</button>
+    </div>
+    <div class="months">
+      <div>Enero</div>
+      <div>Febrero</div>
+      <div>Marzo</div>
+      <div>Abril</div>
+      <div>Mayo</div>
+      <div>Junio</div>
+      <div>Julio</div>
+      <div>Agosto</div>
+      <div>Septiembre</div>
+      <div>Octubre</div>
+      <div>Noviembre</div>
+      <div>Diciembre</div>
+    </div>
+  </div>
+  `
+
+  // Globales
+  const input =  document.getElementById('date');
+  const currentDate = new Date();
+  let Month = currentDate.getMonth() +1;
+  let Year = currentDate.getFullYear();
+  input.value = `${Month}/${Year}`;
+
+  function openCalendar () {
+
+  // Mostrar el calendario con SweetAlert2
+  Swal.fire({
+    html: calendar,
+    didRender: () => {
+      // Definir variables
+      const yearElement = document.getElementById('year');
+      const prevYearBtn = document.getElementById('prev-year');
+      const nextYearBtn = document.getElementById('next-year');
+
+      // Actualizar el año y mes con la fecha actual
+      updateYear(Year);
+      handleMonthClick(Month -1);
+
+      // Función para actualizar el año en el encabezado
+      function updateYear(year) {
+        yearElement.textContent = year;
+        Year = year;
+      }
+
+      // Función para manejar el evento del mes elegido
+      function handleMonthClick(idx) {
+        const months = document.querySelectorAll('.months div');
+        months.forEach(item => {
+          item.classList.remove('selected');
+        });
+        months[idx].classList.add('selected');
+        Month = idx +1;
+      }
+
+      // Manejador de eventos para avanzar al siguiente año
+      nextYearBtn.addEventListener('click', () => {
+        Year += 1;
+        updateYear(Year);
+      });
+
+      // Manejador de eventos para retroceder al año anterior
+      prevYearBtn.addEventListener('click', () => {
+        Year -= 1;
+        updateYear(Year);
+      });
+
+      // Manejador de eventos para el mes elegido
+      const months = document.querySelectorAll('.months div');
+      months.forEach((item, idx) => {
+        item.addEventListener('click', () => {
+          handleMonthClick(idx);
+        });
+      });
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      input.value = `${Month}/${Year}`;
+    }
+  });
+}
+
+</script>
